@@ -7,7 +7,7 @@ using System;
 
 namespace Systems
 {
-    public class DataSenderSystem : BaseSystem,  IDataSenderSystem
+    public partial class DataSenderSystem : BaseSystem,  IDataSenderSystem
     {
         private ConnectionsHolderComponent connectionsHolder;
 
@@ -61,7 +61,7 @@ namespace Systems
         }
     }
 
-    public interface IDataSenderSystem : ISystem
+    public partial interface IDataSenderSystem : ISystem
     {
         void SendCommandToAll<T>(T networkCommand, Guid address, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand;
         void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand;

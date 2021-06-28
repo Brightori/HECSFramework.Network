@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 namespace Components
 {
     [Documentation("Network", "Компонент который хранит все возможные связки подключений")]
-    public class ConnectionsHolderComponent : BaseComponent
+    public partial class ConnectionsHolderComponent : BaseComponent
     {
         public ConcurrentDictionary<Guid, DateTime> ClientConnectionsTimes { get; } = new ConcurrentDictionary<Guid, DateTime>();
         public ConcurrentDictionary<Guid, NetPeer> ClientConnectionsGUID { get; } = new ConcurrentDictionary<Guid, NetPeer>();
