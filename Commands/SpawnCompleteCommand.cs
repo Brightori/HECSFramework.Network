@@ -14,6 +14,6 @@ namespace Commands
         public int SyncIndex;
 
         [Key(2)]
-        public int LocationIndex;
+        public int WorldIndex;
     }
 }

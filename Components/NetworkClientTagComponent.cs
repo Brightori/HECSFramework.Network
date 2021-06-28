@@ -1,9 +1,5 @@
 ﻿using HECSFramework.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Components
 {
@@ -11,5 +7,8 @@ namespace Components
     public class NetworkClientTagComponent : BaseComponent
     {
         public Guid ClientGuid => Owner.GUID;
+        
+        [Field(0)]
+        public int WorldIndex;
     }
 }
