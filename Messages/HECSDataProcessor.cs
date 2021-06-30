@@ -1,5 +1,4 @@
 ﻿using HECSFramework.Core;
-using HECSServer.Core;
 
 namespace HECSFramework.Network
 {
@@ -24,7 +23,7 @@ namespace HECSFramework.Network
     }
 }
 
-namespace HECSServer.Core
+namespace HECSFramework.Network
 {
     public interface IDataProcessor
     {

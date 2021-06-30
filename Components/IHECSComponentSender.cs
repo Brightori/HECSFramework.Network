@@ -2,7 +2,7 @@
 using LiteNetLib;
 using System;
 
-namespace HECSServer.HECSNetwork
+namespace HECSFramework.Network
 {
     public interface IHECSSender
     {

@@ -1,4 +1,4 @@
-﻿namespace HECSServer.HECSNetwork
+﻿namespace HECSFramework.Network
 {
     public interface IReplicable
     {
