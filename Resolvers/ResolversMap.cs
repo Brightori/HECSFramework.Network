@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace HECSFramework.Core
 {
@@ -8,12 +7,6 @@ namespace HECSFramework.Core
     {
         private Dictionary<int, ICommandResolver> hashTypeToResolver = new Dictionary<int, ICommandResolver>(64);
         private Dictionary<Type, int> typeTohash = new Dictionary<Type, int>(64);
-        partial void InitPartialCommandResolvers();
-
-        public void InitCommandResolvers()
-        {
-            InitPartialCommandResolvers();
-        }
 
         public ResolverDataContainer GetCommandContainer<T>(T command, Guid sender) where T : INetworkCommand
         {
@@ -47,7 +40,6 @@ namespace HECSFramework.Core
     {
         void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = 0);
     }
-
 
     public interface INetworkCommand : ICommand, IGlobalCommand, IData
     {
