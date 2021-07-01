@@ -9,5 +9,8 @@ namespace Commands
     {
         [Key(0)]
         public Guid Client;
+
+        [Key(1)]
+        public int Zone;
     }
 }
