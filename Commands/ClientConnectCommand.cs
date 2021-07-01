@@ -5,7 +5,7 @@ using System;
 namespace Commands
 {
     [MessagePackObject]
-    public struct ClientConnectCommand : INetworkCommand
+    public struct ClientConnectCommand : INetworkCommand, IData
     {
         [Key(0)]
         public Guid Client;
