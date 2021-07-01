@@ -8,7 +8,7 @@ namespace HECSFramework.Core
         private Dictionary<int, ICommandResolver> hashTypeToResolver = new Dictionary<int, ICommandResolver>(64);
         private Dictionary<Type, int> typeTohash = new Dictionary<Type, int>(64);
 
-        public ResolverDataContainer GetCommandContainer<T>(T command, Guid sender) where T : INetworkCommand
+        public ResolverDataContainer GetCommandContainer<T>(T command, Guid sender) where T : INetworkCommand, IData
         {
             return new ResolverDataContainer
             {
@@ -41,7 +41,7 @@ namespace HECSFramework.Core
         void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = 0);
     }
 
-    public interface INetworkCommand : ICommand, IGlobalCommand, IData
+    public interface INetworkCommand : ICommand, IGlobalCommand 
     {
     }
 }

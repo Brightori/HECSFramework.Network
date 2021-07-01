@@ -2,7 +2,7 @@
 
 namespace Commands
 {
-    public struct TextMessageCommand : INetworkCommand
+    public struct TextMessageCommand : INetworkCommand, IData
     {
         public string TextMessage;
     }

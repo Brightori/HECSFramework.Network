@@ -16,7 +16,7 @@ namespace Systems
             connectionsHolder = Owner.GetHECSComponent<ConnectionsHolderComponent>();
         }
 
-        public void SendCommandToAll<T>(T networkCommand, Guid address, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand
+        public void SendCommandToAll<T>(T networkCommand, Guid address, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand, IData
         {
             var data = PackResolverContainer(networkCommand, address);
 
@@ -30,10 +30,10 @@ namespace Systems
                 kvp.Value.Send(data, deliveryMethod);
         }
 
-        private byte[] PackResolverContainer<T>(T command, Guid guid) where T: INetworkCommand
+        private byte[] PackResolverContainer<T>(T command, Guid guid) where T: INetworkCommand, IData
         {
             var resolverDataContainer = EntityManager.ResolversMap.GetCommandContainer(command, guid);
-            return MessagePackSerializer.Serialize(resolverDataContainer);
+            return MessagePackSerializer.Serialize<IData>(resolverDataContainer);
         }
 
         private byte[] PackResolverContainer(ResolverDataContainer container)
@@ -41,13 +41,13 @@ namespace Systems
             return MessagePackSerializer.Serialize(container);
         }
 
-        public void SendCommand<T>(Guid client, T networkCommand) where T : INetworkCommand
+        public void SendCommand<T>(Guid client, T networkCommand) where T : INetworkCommand, IData
         {
             var peer = connectionsHolder.ClientConnectionsGUID[client];
             SendCommand(peer, client,  networkCommand);
         }
 
-        public void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand
+        public void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand, IData
         {
             peer.Send(PackResolverContainer(networkCommand, address), deliveryMethod);
         }
@@ -63,9 +63,9 @@ namespace Systems
 
     public partial interface IDataSenderSystem : ISystem
     {
-        void SendCommandToAll<T>(T networkCommand, Guid address, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand;
-        void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand;
-        void SendCommand<T>(Guid client, T networkCommand) where T : INetworkCommand;
+        void SendCommandToAll<T>(T networkCommand, Guid address, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand, IData;
+        void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand, IData;
+        void SendCommand<T>(Guid client, T networkCommand) where T : INetworkCommand, IData;
         void SyncSendComponentToAll(INetworkComponent component, Guid entityOfComponent, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable);
     }
 }
