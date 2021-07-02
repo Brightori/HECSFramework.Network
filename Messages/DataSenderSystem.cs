@@ -33,7 +33,7 @@ namespace Systems
         private byte[] PackResolverContainer<T>(T command, Guid guid) where T: INetworkCommand, IData
         {
             var resolverDataContainer = EntityManager.ResolversMap.GetCommandContainer(command, guid);
-            return MessagePackSerializer.Serialize<IData>(resolverDataContainer);
+            return MessagePackSerializer.Serialize(resolverDataContainer);
         }
 
         private byte[] PackResolverContainer(ResolverDataContainer container)
@@ -49,7 +49,10 @@ namespace Systems
 
         public void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand, IData
         {
-            peer.Send(PackResolverContainer(networkCommand, address), deliveryMethod);
+            var rawData = PackResolverContainer(networkCommand, address);
+            var test = string.Join(" ", rawData);
+            var tryData = MessagePackSerializer.Deserialize<ResolverDataContainer>(rawData);
+            peer.Send(rawData, deliveryMethod);
         }
 
         public void SyncSendComponentToAll(INetworkComponent component, Guid entityOfComponent, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)

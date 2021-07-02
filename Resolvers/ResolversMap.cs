@@ -12,7 +12,7 @@ namespace HECSFramework.Core
         {
             return new ResolverDataContainer
             {
-                Data = command,
+                Data = MessagePack.MessagePackSerializer.Serialize(command),
                 Type = 2,
                 EntityGuid = sender,
                 TypeHashCode = typeTohash[typeof(T)],
@@ -32,7 +32,8 @@ namespace HECSFramework.Core
     {
         public void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = 0)
         {
-            EntityManager.Command((T)resolverDataContainer.Data, worldIndex);
+            var command = MessagePack.MessagePackSerializer.Deserialize<T>(resolverDataContainer.Data);
+            EntityManager.Command(command, worldIndex);
         }
     }
 
