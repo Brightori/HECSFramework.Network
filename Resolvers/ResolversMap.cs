@@ -42,7 +42,7 @@ namespace HECSFramework.Core
         void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = 0);
     }
 
-    public interface INetworkCommand : ICommand, IGlobalCommand 
+    public interface INetworkCommand : ICommand, IGlobalCommand, IData
     {
     }
 }
