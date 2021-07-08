@@ -17,12 +17,9 @@ namespace Commands
         public EntityResolver Entity;
 
         [Key(3)]
-        public ActorContainerIDResolver ActorContainerID;
-
-        [Key(4)]
         public bool IsNeedRecieveConfirm;
 
-        [Key(5)]
+        [Key(4)]
         public int Index;
     }
 }
