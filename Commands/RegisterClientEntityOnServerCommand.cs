@@ -6,7 +6,9 @@ namespace Commands
 {
     [MessagePackObject]
     [Documentation("Network", "Мы отправляем на сервер команду с просьбой зарегистроровать данную ентити")]
-    public struct RegisterClientEntityOnServerCommand : INetworkCommand
+    ///если нам нужна проектозависимая история - делаем парт часть, там прописываем данные, 
+    ///и отдельную систему которая обрабатывает эти данные
+    public partial struct RegisterClientEntityOnServerCommand : INetworkCommand
     {
         [Key(0)]
         public Guid ClientGuid;
