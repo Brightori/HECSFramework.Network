@@ -71,4 +71,49 @@ namespace Systems
         void SendCommand<T>(Guid client, T networkCommand) where T : INetworkCommand, IData;
         void SyncSendComponentToAll(INetworkComponent component, Guid entityOfComponent, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable);
     }
+
+    [MessagePack.MessagePackObject]
+    public struct ByteData
+    {
+        [Key(0)]
+        public byte LastIndex; 
+        [Key(1)]
+        public byte PartNumber; 
+        [Key(2)]
+        public byte OverallParts;
+        [Key(3)]
+        public byte _0;
+        [Key(4)]
+        public byte _1;
+        [Key(5)]
+        public byte _2;
+        [Key(6)]
+        public byte _3;
+        [Key(8)]
+        public byte _4;
+        [Key(9)]
+        public byte _5;
+        [Key(10)]
+        public byte _6;
+        [Key(11)]
+        public byte _7;
+        [Key(12)]
+        public byte _8;
+        [Key(13)]
+        public byte _9;
+        [Key(14)]
+        public byte _10;
+        [Key(15)]
+        public byte _11;
+        [Key(16)]
+        public byte _12;
+        [Key(17)]
+        public byte _13;
+        [Key(18)]
+        public byte _14;
+        [Key(19)]
+        public byte _15;
+        [Key(20)]
+        public int Index;
+    }
 }
