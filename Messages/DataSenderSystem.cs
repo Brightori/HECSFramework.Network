@@ -4,12 +4,14 @@ using HECSFramework.Network;
 using LiteNetLib;
 using MessagePack;
 using System;
+using System.IO.Pipes;
 
 namespace Systems
 {
-    public partial class DataSenderSystem : BaseSystem,  IDataSenderSystem
+    public partial class DataSenderSystem : BaseSystem, IDataSenderSystem
     {
         private ConnectionsHolderComponent connectionsHolder;
+        private HECSMask clientIDHolderMask = HMasks.GetMask<ClientIDHolderComponent>();
 
         public override void InitSystem()
         {
@@ -23,14 +25,25 @@ namespace Systems
             foreach (var kvp in connectionsHolder.ClientConnectionsGUID)
                 kvp.Value.Send(data, deliveryMethod);
         }
-        
+
         private void SendAll(byte[] data, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
         {
             foreach (var kvp in connectionsHolder.ClientConnectionsGUID)
                 kvp.Value.Send(data, deliveryMethod);
         }
 
-        private byte[] PackResolverContainer<T>(T command, Guid guid) where T: INetworkCommand, IData
+        private void SendAllExcept(byte[] data, Guid except, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+        {
+            foreach (var kvp in connectionsHolder.ClientConnectionsGUID)
+            {
+                if (kvp.Key == except)
+                    continue;
+
+                kvp.Value.Send(data, deliveryMethod);
+            }
+        }
+
+        private byte[] PackResolverContainer<T>(T command, Guid guid) where T : INetworkCommand, IData
         {
             var resolverDataContainer = EntityManager.ResolversMap.GetCommandContainer(command, guid);
             return MessagePackSerializer.Serialize(resolverDataContainer);
@@ -44,7 +57,7 @@ namespace Systems
         public void SendCommand<T>(Guid client, T networkCommand) where T : INetworkCommand, IData
         {
             var peer = connectionsHolder.ClientConnectionsGUID[client];
-            SendCommand(peer, client,  networkCommand);
+            SendCommand(peer, client, networkCommand);
         }
 
         public void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand, IData
@@ -58,7 +71,17 @@ namespace Systems
             var resolverContainer = EntityManager.ResolversMap.GetComponentContainer(component);
             var data = PackResolverContainer(resolverContainer);
 
-            SendAll(data, deliveryMethod);
+            if (component.Owner.TryGetHecsComponent(clientIDHolderMask, out ClientIDHolderComponent clientIDHolder))
+            {
+                if (component is ISyncToSelf)
+                    SendAll(data, deliveryMethod);
+                else
+                    SendAllExcept(data, clientIDHolder.ClientID, deliveryMethod);
+            }
+            else
+            {
+                SendAll(data, deliveryMethod);
+            }
         }
     }
 
@@ -74,9 +97,9 @@ namespace Systems
     public struct ByteData
     {
         [Key(0)]
-        public byte LastIndex; 
+        public byte LastIndex;
         [Key(1)]
-        public byte PartNumber; 
+        public byte PartNumber;
         [Key(2)]
         public byte OverallParts;
         [Key(3)]

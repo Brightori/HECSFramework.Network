@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HECSFramework.Network;
+using System;
 using System.Collections.Generic;
 
 namespace HECSFramework.Core
@@ -17,6 +18,33 @@ namespace HECSFramework.Core
                 EntityGuid = sender,
                 TypeHashCode = typeTohash[typeof(T)],
             };
+        }
+
+        public EntityResolver GetNetworkEntityResolver(IEntity entity)
+        {
+            var resolverMap = EntityManager.ResolversMap;
+            var resolver = new EntityResolver();
+            resolver.Components = new List<ResolverDataContainer>(16);
+            resolver.Systems= new List<ResolverDataContainer>(16);
+
+            foreach (var c in entity.GetAllComponents)
+            {
+                if (c == null)
+                    continue;
+
+                if (c is INetworkComponent)
+                    resolver.Components.Add(resolverMap.GetComponentContainer(c));
+            }
+
+            foreach (var s in entity.GetAllSystems)
+            {
+                if (s == null || s is INotReplicable)
+                    continue;
+
+                resolver.Systems.Add(resolverMap.GetSystemContainer(s));
+            }
+
+            return resolver;
         }
 
         public void ProcessCommand(ResolverDataContainer resolverDataContainer)

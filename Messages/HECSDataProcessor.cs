@@ -9,8 +9,10 @@ namespace HECSFramework.Network
             switch (message.Type)
             {
                 case 0:
-                    EntityManager.TryGetEntityByID(message.EntityGuid, out var entity);
-                    EntityManager.ResolversMap.ProcessResolverContainer(ref message, ref entity);
+                    if (EntityManager.TryGetEntityByID(message.EntityGuid, out var entity))
+                    {
+                        EntityManager.ResolversMap.ProcessResolverContainer(ref message, ref entity);
+                    }
                     break;
                 case 1:
                     break;
