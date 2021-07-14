@@ -14,7 +14,7 @@ namespace Commands
         public Guid CharacterGuid;
 
         [Key(2)]
-        public byte[] Entity;
+        public EntityResolver Entity;
 
         [Key(3)]
         public bool IsNeedRecieveConfirm;
