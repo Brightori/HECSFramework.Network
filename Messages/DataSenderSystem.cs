@@ -49,10 +49,8 @@ namespace Systems
 
         public void SendCommand<T>(NetPeer peer, Guid address, T networkCommand, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered) where T : INetworkCommand, IData
         {
-            var rawData = PackResolverContainer(networkCommand, address);
-            var test = string.Join(" ", rawData);
-            var tryData = MessagePackSerializer.Deserialize<ResolverDataContainer>(rawData);
-            peer.Send(rawData, deliveryMethod);
+            var data = PackResolverContainer(networkCommand, address);
+            peer.Send(data, deliveryMethod);
         }
 
         public void SyncSendComponentToAll(INetworkComponent component, Guid entityOfComponent, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
