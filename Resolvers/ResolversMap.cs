@@ -43,6 +43,7 @@ namespace HECSFramework.Core
 
                 resolver.Systems.Add(resolverMap.GetSystemContainer(s));
             }
+            resolver.Guid = entity.GUID;
 
             return resolver;
         }
