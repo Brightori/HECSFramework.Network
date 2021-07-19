@@ -8,7 +8,7 @@ namespace Components
         public int Version { get; set; }
         public bool IsDirty { get; set; }
 
-        public void InfoUpdated()
+        partial void InfoUpdated()
         {
             IsDirty = true;
             Version++;
