@@ -2,7 +2,7 @@
 
 namespace Commands
 {
-    public class SyncComponentsCommand : ICommand
+    public struct SyncComponentsCommand : IGlobalCommand
     {
     }
 }

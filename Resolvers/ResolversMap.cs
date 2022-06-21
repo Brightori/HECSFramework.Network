@@ -1,6 +1,7 @@
 ﻿using HECSFramework.Network;
 using System;
 using System.Collections.Generic;
+using Commands;
 
 namespace HECSFramework.Core
 {
@@ -25,7 +26,7 @@ namespace HECSFramework.Core
             var resolverMap = EntityManager.ResolversMap;
             var resolver = new EntityResolver();
             resolver.Components = new List<ResolverDataContainer>(16);
-            resolver.Systems= new List<ResolverDataContainer>(16);
+            resolver.Systems = new List<ResolverDataContainer>(16);
 
             foreach (var c in entity.GetAllComponents)
             {
@@ -50,25 +51,41 @@ namespace HECSFramework.Core
 
         public void ProcessCommand(ResolverDataContainer resolverDataContainer)
         {
-            if (hashTypeToResolver.TryGetValue(resolverDataContainer.TypeHashCode, out var resolver))
+            if (!hashTypeToResolver.TryGetValue(resolverDataContainer.TypeHashCode, out var resolver))
             {
-                resolver.ResolveCommand(resolverDataContainer);
+                HECSDebug.LogWarning($"Undefined command: {resolverDataContainer.TypeHashCode}");
+                return;
             }
+
+            resolver.ResolveCommand(resolverDataContainer);
         }
+
+        public string GetCommandName(ResolverDataContainer resolverDataContainer)
+            => hashTypeToResolver.TryGetValue(resolverDataContainer.TypeHashCode, out var resolver) ? resolver.GetCommandName(resolverDataContainer) : string.Empty;
     }
 
     public class CommandResolver<T> : ICommandResolver where T : INetworkCommand
     {
-        public void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = 0)
+        public void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = -1)
         {
             var command = MessagePack.MessagePackSerializer.Deserialize<T>(resolverDataContainer.Data);
-            EntityManager.Command(command, worldIndex);
+
+            if (resolverDataContainer.EntityGuid == Guid.Empty)
+                EntityManager.Command(command, worldIndex);
+            else if (EntityManager.TryGetEntityByID(resolverDataContainer.EntityGuid, out var entity))
+                    entity.Command(command);
+            else
+                HECSDebug.LogWarning($"Receiving entity not found: {resolverDataContainer.EntityGuid}");
         }
+
+        public string GetCommandName(ResolverDataContainer resolverDataContainer)
+            => MessagePack.MessagePackSerializer.Deserialize<T>(resolverDataContainer.Data).GetType().Name;
     }
 
-    public interface ICommandResolver
+    public partial interface ICommandResolver
     {
-        void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = 0);
+        void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = -1);
+        string GetCommandName(ResolverDataContainer resolverDataContainer);
     }
 
     public interface INetworkCommand : ICommand, IGlobalCommand, IData

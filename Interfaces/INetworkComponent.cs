@@ -7,6 +7,4 @@ namespace HECSFramework.Network
         int Version { get; set; }
         bool IsDirty { get; set; }
     }
-
-    public interface ISyncToSelf { }
 }

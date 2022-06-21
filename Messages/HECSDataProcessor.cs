@@ -1,4 +1,5 @@
-﻿using HECSFramework.Core;
+﻿using Commands;
+using HECSFramework.Core;
 
 namespace HECSFramework.Network
 {
@@ -9,10 +10,17 @@ namespace HECSFramework.Network
             switch (message.Type)
             {
                 case 0:
-                    if (EntityManager.TryGetEntityByID(message.EntityGuid, out var entity))
+                    TypesMap.GetComponentInfo(message.TypeHashCode, out var info);
+                    if (!EntityManager.TryGetEntityByID(message.EntityGuid, out var entity))
                     {
-                        EntityManager.ResolversMap.ProcessResolverContainer(ref message, ref entity);
+                        HECSDebug.LogWarning($"Receiving entity not found: {message.EntityGuid}, component: {info.ComponentName}");
+                        break;
                     }
+
+                    if (entity.GetAllComponents[info.ComponentsMask.Index] == null)
+                        entity.AddHecsComponent(EntityManager.ResolversMap.GetComponentFromContainer(message));
+                    else
+                        EntityManager.ResolversMap.ProcessResolverContainer(ref message, ref entity);
                     break;
                 case 1:
                     break;
