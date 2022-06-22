@@ -19,5 +19,8 @@ namespace Commands
  
         [Key(1)]
         public string ConfigData { get; set; }
+
+        [Key(2)]
+        public int DisconnectTimeoutMs;
     }
 }
