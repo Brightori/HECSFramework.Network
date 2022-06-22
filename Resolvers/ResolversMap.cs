@@ -64,7 +64,7 @@ namespace HECSFramework.Core
             => hashTypeToResolver.TryGetValue(resolverDataContainer.TypeHashCode, out var resolver) ? resolver.GetCommandName(resolverDataContainer) : string.Empty;
     }
 
-    public class CommandResolver<T> : ICommandResolver where T : INetworkCommand
+    public class CommandResolver<T> : ICommandResolver where T : struct, INetworkCommand
     {
         public void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = -1)
         {
