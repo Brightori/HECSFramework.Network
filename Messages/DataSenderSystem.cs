@@ -11,10 +11,11 @@ using System.Linq;
 namespace Systems
 {
     [Documentation("Network", "Эта система отвечает за пересылку данных по сети")]
-    public partial class DataSenderSystem : BaseSystem
+    public partial class DataSenderSystem : BaseSystem 
     {
         private readonly ConcurrentBag<(Guid client, NetPeer peer)> aliveConnections = new ConcurrentBag<(Guid client, NetPeer peer)>();
         private ConnectionsHolderComponent connectionsHolder;
+        private HECSMask clientIDHolderMask = HMasks.GetMask<ClientIDHolderComponent>();
 
         public override void InitSystem()
         {
@@ -154,7 +155,7 @@ namespace Systems
 
         public void SendComponentToOwner(INetworkComponent component, DeliveryMethod deliveryMethod = DeliveryMethod.ReliableUnordered)
         {
-            var client = component.Owner.GetClientIDHolderComponent().ClientID;
+            var client = component.Owner.GetHECSComponent<ClientIDHolderComponent>(ref clientIDHolderMask).ClientID;
             var peer = connectionsHolder.ClientConnectionsGUID[client];
             var resolverContainer = EntityManager.ResolversMap.GetComponentContainer(component);
             var data = PackResolverContainer(resolverContainer);
