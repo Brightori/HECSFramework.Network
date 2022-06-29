@@ -14,6 +14,10 @@ namespace Components
         [Field(1)] 
         public int Version { get; set; }
 
+        [Field(2)]
+        [HideInInspectorCrossPlatform]
+        public string LocationAssetGuid;
+
         public void AfterSync()
         {
             IsDirty = true;
