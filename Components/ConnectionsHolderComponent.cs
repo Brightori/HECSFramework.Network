@@ -5,8 +5,8 @@ using System.Collections.Concurrent;
 
 namespace Components
 {
-    [Documentation("Network", "Компонент который хранит все возможные связки подключений")]
-    public partial class ConnectionsHolderComponent : BaseComponent
+    [Documentation(Doc.Network, "This component holds information about any network connections and hold litenetlib netmanager")]
+    public partial class ConnectionsHolderComponent : BaseComponent, IWorldSingleComponent
     {
         public ConcurrentDictionary<Guid, DateTime> ClientConnectionsTimes { get; } = new ConcurrentDictionary<Guid, DateTime>();
         public ConcurrentDictionary<Guid, NetPeer> ClientConnectionsGUID { get; } = new ConcurrentDictionary<Guid, NetPeer>();
