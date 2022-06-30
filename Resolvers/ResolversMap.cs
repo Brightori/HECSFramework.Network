@@ -49,7 +49,7 @@ namespace HECSFramework.Core
             return resolver;
         }
 
-        public void ProcessCommand(ResolverDataContainer resolverDataContainer)
+        public void ProcessCommand(ResolverDataContainer resolverDataContainer, World world)
         {
             if (!hashTypeToResolver.TryGetValue(resolverDataContainer.TypeHashCode, out var resolver))
             {
@@ -57,7 +57,7 @@ namespace HECSFramework.Core
                 return;
             }
 
-            resolver.ResolveCommand(resolverDataContainer);
+            resolver.ResolveCommand(resolverDataContainer, world);
         }
 
         public string GetCommandName(ResolverDataContainer resolverDataContainer)
@@ -66,13 +66,13 @@ namespace HECSFramework.Core
 
     public class CommandResolver<T> : ICommandResolver where T : struct, INetworkCommand
     {
-        public void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = -1)
+        public void ResolveCommand(ResolverDataContainer resolverDataContainer, World world)
         {
             var command = MessagePack.MessagePackSerializer.Deserialize<T>(resolverDataContainer.Data);
 
             if (resolverDataContainer.EntityGuid == Guid.Empty)
-                EntityManager.Command(command, worldIndex);
-            else if (EntityManager.TryGetEntityByID(resolverDataContainer.EntityGuid, out var entity))
+                world.Command(command);
+            else if (world.TryGetEntityByID(resolverDataContainer.EntityGuid, out var entity))
                     entity.Command(command);
             else
                 HECSDebug.LogWarning($"Receiving entity not found: {resolverDataContainer.EntityGuid}");
@@ -84,7 +84,7 @@ namespace HECSFramework.Core
 
     public partial interface ICommandResolver
     {
-        void ResolveCommand(ResolverDataContainer resolverDataContainer, int worldIndex = -1);
+        void ResolveCommand(ResolverDataContainer resolverDataContainer, World world);
         string GetCommandName(ResolverDataContainer resolverDataContainer);
     }
 
