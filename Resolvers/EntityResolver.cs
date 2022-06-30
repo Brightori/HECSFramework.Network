@@ -1,4 +1,5 @@
-﻿using HECSFramework.Network;
+﻿using System.Collections.Generic;
+using HECSFramework.Network;
 
 namespace HECSFramework.Core
 {
