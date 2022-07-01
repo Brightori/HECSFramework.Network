@@ -13,6 +13,7 @@ namespace Components
         public ConcurrentDictionary<int, NetPeer> ClientConnectionsID { get; } = new ConcurrentDictionary<int, NetPeer>();
         public ConcurrentDictionary<int, ConcurrentDictionary<int, NetPeer>> WorldToPeerClients { get; } = new ConcurrentDictionary<int, ConcurrentDictionary<int, NetPeer>>();
         public ConcurrentDictionary<Guid, int> EntityToWorldConnections { get; } = new ConcurrentDictionary<Guid, int>();
+        public ConcurrentDictionary<NetPeer, World> PeerToWorldConnections { get; } = new ConcurrentDictionary<NetPeer, World>();
         public NetManager NetManager { get; set; }
         public EventBasedNetListener Listener { get; } = new EventBasedNetListener();
 
