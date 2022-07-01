@@ -1,15 +1,16 @@
 ﻿using Commands;
+using Components;
 using HECSFramework.Core;
 using System.Collections.Concurrent;
 
 namespace Systems
 {
-    [Documentation(Doc.Server, "The system is responsible for adding, removing entities to the world")]
-    public class EntitiesSystem : BaseSystem, IUpdatable
+    [Documentation(Doc.Server, "The system is responsible for adding, removing entities to the client entity")]
+    public class BindEntitiesToClientSystem : BaseSystem, IUpdatable
     {
         private short generatorID = 1;
-        private ConcurrentQueue<IEntity> incomingEntities = new ConcurrentQueue<IEntity>();
-
+        
+        private ConcurrentQueue<(Guid client, IEntity entity)> incomingEntities = new ConcurrentQueue<(Guid client, IEntity entity)>();
         private ConcurrencyList<IEntity> entityForRep;
 
       //  private Dictionary<int, IEntity> nonReplicatedEntities = new Dictionary<int, IEntity>();
@@ -17,23 +18,30 @@ namespace Systems
         private DataSenderSystem dataSender;
         public override void InitSystem()
         {
-            entityForRep = Owner.World.Filter(new FilterMask(HMasks.NetworkEntityTagComponent, HMasks.ReplicationDataComponent));
+            //entityForRep = Owner.World.Filter(new FilterMask(HMasks.NetworkEntityTagComponent, HMasks.ReplicationDataComponent));
+            dataSender = Owner.World.GetSingleComponent<RoomInfoComponent>().ServerWorld.GetSingleSystem<DataSenderSystem>();
         }
 
-        public bool AddEntity(Guid clientID, IEntity entity)
+        public void AddEntity(Guid clientID, IEntity entity)
         {
             incomingEntities.Enqueue(entity);
-            dataSender = EntityManager.GetSingleSystem<DataSenderSystem>();
+            
 
-           return Owner.World.TryGetEntityByID(clientID, out var client);
+           
         }
 
         public void UpdateLocal()
         {
-           
-            while(incomingEntities.TryDequeue(out IEntity entity))
+            while(incomingEntities.TryDequeue(out var data))
             {
-                if(entity.TryGetSystem(out EntityReplicationSystem entityReplication))
+                if (Owner.World.TryGetEntityByID(data.client, out var client))
+                {
+                    client.GetHECSComponent<ClientEntitiesHolderComponent>().ClientEntities.Add(data.entity);
+                    var clientIDholder = data.entity.GetOrAddComponent<ClientIDHolderComponent>();
+                    clientIDholder.ClientID = data.client;
+                }
+
+                if (data.entity.TryGetSystem(out EntityReplicationSystem entityReplication))
                 {
  
                     do { entityReplication.ID = generatorID++; } while (replicatedEntities.ContainsKey(entityReplication.ID));

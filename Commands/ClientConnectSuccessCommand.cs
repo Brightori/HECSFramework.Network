@@ -9,6 +9,9 @@ namespace Commands
     {
         [Key(0)]
         public ServerData ServerData;
+
+        [Key(1)]
+        public Guid Guid;
     }
 
     [Serializable, MessagePackObject]

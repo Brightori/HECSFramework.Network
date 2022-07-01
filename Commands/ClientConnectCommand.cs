@@ -7,13 +7,10 @@ namespace Commands
     [MessagePackObject]
     public struct ClientConnectCommand : INetworkCommand 
     {
-        [Key(0)]
-        public Guid Client;
-
         [Key(1)]
-        public int Zone;
+        public int Version;
 
         [Key(2)]
-        public int Version;
+        public int RoomWorld;
     }
 }
