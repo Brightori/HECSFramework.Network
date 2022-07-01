@@ -5,13 +5,13 @@ namespace HECSFramework.Network
 {
     public class HECSDataProcessor : IDataProcessor
     {
-        void IDataProcessor.Process(ResolverDataContainer message)
+        void IDataProcessor.Process(ResolverDataContainer message, World world)
         {
             switch (message.Type)
             {
                 case 0:
                     TypesMap.GetComponentInfo(message.TypeHashCode, out var info);
-                    if (!EntityManager.TryGetEntityByID(message.EntityGuid, out var entity))
+                    if (!world.TryGetEntityByID(message.EntityGuid, out var entity))
                     {
                         HECSDebug.LogWarning($"Receiving entity not found: {message.EntityGuid}, component: {info.ComponentName}");
                         break;
@@ -25,7 +25,7 @@ namespace HECSFramework.Network
                 case 1:
                     break;
                 case 2:
-                    EntityManager.ResolversMap.ProcessCommand(message);
+                    EntityManager.ResolversMap.ProcessCommand(message, world);
                     break;
 
             }
@@ -37,6 +37,6 @@ namespace HECSFramework.Network
 {
     public interface IDataProcessor
     {
-        void Process(ResolverDataContainer message);
+        void Process(ResolverDataContainer message, World world);
     }
 }

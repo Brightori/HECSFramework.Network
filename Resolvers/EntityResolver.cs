@@ -1,6 +1,5 @@
-﻿using HECSFramework.Network;
-using HECSFramework.Unity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using HECSFramework.Network;
 
 namespace HECSFramework.Core
 {
@@ -20,9 +19,6 @@ namespace HECSFramework.Core
                 if (c is IClientSide)
                     continue;
 
-                if (c is IHaveActor)
-                    continue;
-
                 Components.Add(EntityManager.ResolversMap.GetComponentContainer(c));
             }
 
@@ -32,9 +28,6 @@ namespace HECSFramework.Core
                     continue;
 
                 if (s is IClientSide)
-                    continue;
-
-                if (s is IHaveActor)
                     continue;
 
                 Systems.Add(EntityManager.ResolversMap.GetSystemContainer(s));
