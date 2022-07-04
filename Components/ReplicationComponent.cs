@@ -84,6 +84,8 @@ namespace Components
 
                 replicationToken = GetValue();
 
+           
+
                 //Marshal.PtrToStructure(fieldInfo.FieldHandle.Value, fieldInfo.FieldType);
                 //fieldInfo.GetValueDirect(TypedReference.MakeTypedReference);
             }
@@ -93,11 +95,12 @@ namespace Components
             }
         }
 
-       
+      
 
         private Dictionary<Mask, ReplicationFieldAttribute> replicationMap = new Dictionary<Mask, ReplicationFieldAttribute>();
 
 
+        public int ComponentID => GetTypeHashCode;
         public byte[] ReplicationData { get; private set; } = null;
         public bool IsDirty => replicationMap.Values.Any((f) => f.IsDirty);
 
@@ -140,11 +143,11 @@ namespace Components
 
                 int size = sizeof(int);
                 int hashCodeType = GetTypeHashCode;
-                Buffer.MemoryCopy(&hashCodeType, ptr, size, size);
+                Buffer.MemoryCopy(&hashCodeType, ptr + index, size, size);
                 index += size;
 
                 size = sizeof(Mask);
-                Buffer.MemoryCopy(&bitMask, ptr, size, size);
+                Buffer.MemoryCopy(&bitMask, ptr + index, size, size);
                 index += size;
 
                 foreach (var replicationField in replicationMap.Values)
@@ -163,6 +166,35 @@ namespace Components
                 }
             }
             return data;
+        }
+
+        internal unsafe void UpdateData(byte[] componentData)
+        {
+            fixed (byte* ptr = componentData)
+            {
+                int index = 0;
+
+                int size = sizeof(int);
+                int hashCodeType = 0;
+                Buffer.MemoryCopy(ptr + index, &hashCodeType, size, size);
+                index += size;
+
+                size = sizeof(Mask);
+                Mask bitMask = 0;
+                Buffer.MemoryCopy(ptr + index, &bitMask, size, size);
+                index += size;
+
+                foreach (var replicationField in replicationMap.Values)
+                {
+                    if (!bitMask.HasFlag(replicationField.Mask)) continue;
+                    size = replicationField.FieldSize;
+
+
+                    replicationField.SetValue(Marshal.PtrToStructure((IntPtr)(ptr + index), replicationField.FieldType));
+                  
+                    index += size;
+                }
+            }
         }
 
         internal byte[] GetFullData()

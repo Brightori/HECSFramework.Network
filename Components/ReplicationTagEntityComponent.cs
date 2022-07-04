@@ -1,4 +1,7 @@
 ﻿using HECSFramework.Core;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Components
 {
@@ -29,6 +32,16 @@ namespace Components
             }
 
             return components;
+        }
+
+        internal void UpdateComponent(List<byte[]> components)
+        {
+            foreach(byte[] componentData in components)
+            {
+                int componentID = BitConverter.ToInt32(componentData, 0);
+
+                Array.Find(replicationComponents, c => c.ComponentID == componentID).UpdateData(componentData);
+            }
         }
     }
 }
