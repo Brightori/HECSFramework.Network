@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Commands
 {
     [Documentation(Doc.Network, "Command to create an entity with component data replication")]
-    public struct CreateReplicationEntity : ICommand
+    public struct CreateReplicationEntity : ICommand, INetworkCommand
     {
         [Key(0)]
         public short EntityID;
