@@ -5,7 +5,7 @@ using System;
 namespace Components
 {
     [Serializable]
-    public partial class LocationTagComponent : BaseComponent, INetworkComponent, IAfterSerializationComponent
+    public partial class LocationTagComponent : BaseComponent, INetworkComponent, IAfterSerializationComponent, IWorldSingleComponent
     {
         [Field(0)]
         public int LocationZone;
