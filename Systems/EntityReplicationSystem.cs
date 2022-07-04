@@ -31,7 +31,7 @@ namespace Systems
 
         public async void CommandReact(CreateReplicationEntity command)
         {
-            var container = Owner.World.GetSingleComponent<ContainerProviderComponent>().GetEntityContainer(command.ContainerID);
+            var container = await Owner.World.GetSingleComponent<ContainerProviderComponent>().GetEntityContainer(command.ContainerID);
             var actor = await container.GetActor();
             actor.Init();
 
