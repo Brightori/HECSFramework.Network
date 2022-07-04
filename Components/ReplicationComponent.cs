@@ -12,7 +12,7 @@ namespace Components
     public abstract class ReplicationComponent : BaseComponent
     {
         [Flags]
-        protected enum Mask : int
+        protected enum FieldMask : int
         {
             Field_0 = 1 << 0,
             Field_1 = 1 << 1,
@@ -41,7 +41,7 @@ namespace Components
             private FieldInfo fieldInfo;
             private object replicationToken;
 
-            public Mask Mask { get; private set; }
+            public FieldMask Mask { get; private set; }
 
             //TODO Gives wrong boolean size
             public int FieldSize { get; private set; }
@@ -67,7 +67,7 @@ namespace Components
                 }
                 return true;
             }
-            public ReplicationFieldAttribute(Mask mask)
+            public ReplicationFieldAttribute(FieldMask mask)
             {
                 Mask = mask;
             }
@@ -97,7 +97,7 @@ namespace Components
 
       
 
-        private Dictionary<Mask, ReplicationFieldAttribute> replicationMap = new Dictionary<Mask, ReplicationFieldAttribute>();
+        private Dictionary<FieldMask, ReplicationFieldAttribute> replicationMap = new Dictionary<FieldMask, ReplicationFieldAttribute>();
 
 
         public int ComponentID => GetTypeHashCode;
@@ -109,13 +109,13 @@ namespace Components
         {
             if (f.IsDirty) return f.FieldSize;
             return 0;
-        }) + sizeof(Mask);
+        }) + sizeof(FieldMask);
 
-        private int GetDataSizeByMask(Mask mask) => sizeof(int) + replicationMap.Values.Sum((f) =>
+        private int GetDataSizeByMask(FieldMask mask) => sizeof(int) + replicationMap.Values.Sum((f) =>
         {
             if (mask.HasFlag(f.Mask)) return f.FieldSize;
             return 0;
-        }) + sizeof(Mask);
+        }) + sizeof(FieldMask);
 
         public ReplicationComponent()
         {
@@ -134,7 +134,7 @@ namespace Components
         }
 
 
-        private unsafe byte[] GetReplicationData(Mask bitMask)
+        private unsafe byte[] GetReplicationData(FieldMask bitMask)
         {
             byte[] data = new byte[GetDataSizeByMask(bitMask)];
             fixed (byte* ptr = ReplicationData)
@@ -146,7 +146,7 @@ namespace Components
                 Buffer.MemoryCopy(&hashCodeType, ptr + index, size, size);
                 index += size;
 
-                size = sizeof(Mask);
+                size = sizeof(FieldMask);
                 Buffer.MemoryCopy(&bitMask, ptr + index, size, size);
                 index += size;
 
@@ -179,8 +179,8 @@ namespace Components
                 Buffer.MemoryCopy(ptr + index, &hashCodeType, size, size);
                 index += size;
 
-                size = sizeof(Mask);
-                Mask bitMask = 0;
+                size = sizeof(FieldMask);
+                FieldMask bitMask = 0;
                 Buffer.MemoryCopy(ptr + index, &bitMask, size, size);
                 index += size;
 
@@ -201,9 +201,9 @@ namespace Components
         {
             return GetReplicationData(GetDirtyBitMask());
         }
-        private Mask GetDirtyBitMask()
+        private FieldMask GetDirtyBitMask()
         {
-            Mask bitMask = 0;
+            FieldMask bitMask = 0;
 
             foreach (var replicationField in replicationMap.Values)
             {
@@ -211,9 +211,9 @@ namespace Components
             }
             return bitMask;
         }
-        private Mask GetFullBitMask()
+        private FieldMask GetFullBitMask()
         {
-            Mask bitMask = 0;
+            FieldMask bitMask = 0;
 
             foreach (var replicationField in replicationMap.Values)
             {
