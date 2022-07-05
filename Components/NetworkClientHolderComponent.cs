@@ -1,5 +1,6 @@
 ﻿using HECSFramework.Core;
 using LiteNetLib;
+using System;
 
 namespace Components
 {
@@ -20,7 +21,7 @@ namespace Components
  
         }
 
-        internal void Connect(string host, int port, string serverKey, int maxConnectAttempts)
+        internal void ConnectTo(string host, int port, string serverKey, int maxConnectAttempts)
         {
 
             if (Manager == null)
@@ -65,6 +66,25 @@ namespace Components
         {
            if(Client != null)  return $"Address:{Client.EndPoint.Address}, Port:{Client.EndPoint.Port} ConnectionState:{Client.ConnectionState}";
             return "Connection not established";
+        }
+
+        internal void StartServer(int serverTickMilliseconds, int disconnectTimeout, int channels, bool extendedStatisticsEnabled)
+        {
+            if (Manager == null)
+            {
+                Manager = new NetManager(Listener);
+            }
+            else
+            {
+                HECSDebug.LogError("Attempt to re-create socket");
+            }
+
+            Manager.UpdateTime = serverTickMilliseconds;
+            Manager.DisconnectTimeout = disconnectTimeout;
+            Manager.ChannelsCount = (byte)channels;
+            Manager.EnableStatistics = extendedStatisticsEnabled;
+
+            Manager.Start();
         }
     }
 }
