@@ -8,6 +8,7 @@ namespace Components
     public partial class LocationTagComponent : BaseComponent, INetworkComponent, IAfterSerializationComponent, IWorldSingleComponent
     {
         [Field(0)]
+        [HideInInspectorCrossPlatform]
         public int LocationZone;
         public bool IsDirty { get; set; }
         
