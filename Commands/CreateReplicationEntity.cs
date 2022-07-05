@@ -1,13 +1,10 @@
-﻿using HECSFramework.Core;
+﻿using System.Collections.Generic;
+using HECSFramework.Core;
 using MessagePack;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Commands
 {
+    [MessagePackObject]
     [Documentation(Doc.Network, "Command to create an entity with component data replication")]
     public struct CreateReplicationEntity : ICommand, INetworkCommand
     {
