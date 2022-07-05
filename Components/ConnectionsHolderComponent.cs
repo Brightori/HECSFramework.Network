@@ -14,8 +14,7 @@ namespace Components
         public ConcurrentDictionary<Guid, World> EntityToWorldConnections { get; } = new ConcurrentDictionary<Guid, World>();
         public ConcurrentDictionary<NetPeer, World> PeerToWorldConnections { get; } = new ConcurrentDictionary<NetPeer, World>();
         
-        public NetManager NetManager { get; set; }
-        public EventBasedNetListener Listener { get; } = new EventBasedNetListener();
+
 
         public int SyncIndex;
 

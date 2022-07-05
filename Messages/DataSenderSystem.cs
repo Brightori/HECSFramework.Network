@@ -15,11 +15,13 @@ namespace Systems
     {
         private readonly ConcurrentBag<(Guid client, NetPeer peer)> aliveConnections = new ConcurrentBag<(Guid client, NetPeer peer)>();
         private ConnectionsHolderComponent connectionsHolder;
+        private NetworkClientHolderComponent networkClient;
         private HECSMask clientIDHolderMask = HMasks.GetMask<ClientIDHolderComponent>();
 
         public override void InitSystem()
         {
             connectionsHolder = Owner.GetHECSComponent<ConnectionsHolderComponent>();
+            networkClient = Owner.GetHECSComponent<NetworkClientHolderComponent>();
         }
 
         /// <summary>
