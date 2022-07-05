@@ -4,7 +4,7 @@ using LiteNetLib;
 namespace Components
 {
     public enum NetWorkSystemState { Wait, Connect, BeforeSync, Sync, Disconnect, FailToConnect }
-    public class NetworkClientHolderComponent : BaseComponent
+    public class NetworkClientHolderComponent : BaseComponent, IWorldSingleComponent
     {
         public NetPeer Client { get; private set; }
         public NetManager Manager { get; private set; }
