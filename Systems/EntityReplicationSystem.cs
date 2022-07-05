@@ -2,6 +2,8 @@
 using Commands;
 using Components;
 using HECSFramework.Core;
+using HECSFramework.Unity;
+using UnityEngine;
 
 namespace Systems
 {
@@ -26,15 +28,17 @@ namespace Systems
 
         public async void CommandReact(CreateReplicationEntity command)
         {
-            //var container = await Owner.World.GetSingleComponent<ContainerProviderComponent>().GetEntityContainer(command.ContainerID);
-            //var actor = await container.GetActor();
-            //actor.Init();
+            var container = await Owner.World.GetSingleComponent<ContainerProviderComponent>().GetEntityContainer(command.ContainerID);
+            var actor = await container.GetActor();
+            actor.Init();
 
-            //var replicatedEntity = actor.GetHECSComponent<ReplicationTagEntityComponent>();
-            //replicatedEntity.Init(command.EntityID);
-            //replicatedEntity.UpdateComponent(command.Components);
+            Debug.Log($"Char entity create:{actor != null}");
 
-            //replicatedEntities.Add(command.EntityID, replicatedEntity);
+            var replicatedEntity = actor.GetHECSComponent<ReplicationTagEntityComponent>();
+            replicatedEntity.Init(command.EntityID);
+            replicatedEntity.UpdateComponent(command.Components);
+
+            replicatedEntities.Add(command.EntityID, replicatedEntity);
         }
     }
 }

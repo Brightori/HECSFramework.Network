@@ -34,11 +34,17 @@ namespace Components
             return components;
         }
 
-        internal void UpdateComponent(List<byte[]> components)
+        internal unsafe void UpdateComponent(List<byte[]> components)
         {
             foreach(byte[] componentData in components)
             {
-                int componentID = BitConverter.ToInt32(componentData, 0);
+                int componentID = 0;
+                //fixed(byte* ptr = componentData)
+                //{
+                //    int* dist = &componentID;
+                //    Buffer.MemoryCopy(ptr, &componentID, 4, 4);
+                //}
+               
 
                 Array.Find(replicationComponents, c => c.ComponentID == componentID).UpdateData(componentData);
             }
