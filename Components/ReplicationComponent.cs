@@ -137,7 +137,7 @@ namespace Components
         private unsafe byte[] GetReplicationData(FieldMask bitMask)
         {
             byte[] data = new byte[GetDataSizeByMask(bitMask)];
-            fixed (byte* ptr = ReplicationData)
+            fixed (byte* ptr = data)
             {
                 int index = 0;
 
@@ -156,6 +156,7 @@ namespace Components
                     size = replicationField.FieldSize;
 
                     object value = replicationField.GetValue();
+                  //  HECSDebug.LogError($"objectType:{value.GetType()}");
                     var handler = GCHandle.Alloc(value, GCHandleType.Pinned);
                     var ptrValue = handler.AddrOfPinnedObject();
 
@@ -199,7 +200,7 @@ namespace Components
 
         internal byte[] GetFullData()
         {
-            return GetReplicationData(GetDirtyBitMask());
+            return GetReplicationData(GetFullBitMask());
         }
         private FieldMask GetDirtyBitMask()
         {
