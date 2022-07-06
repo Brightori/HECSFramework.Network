@@ -15,11 +15,12 @@ namespace Components
         {
             if(ID != 0) throw new Exception("Attempting to re-register a replicated entity");
             ID = id;
+            replicationComponents = Owner.GetComponentsByType<ReplicationComponent>().ToArray();
         }
 
         public void AfterEntityInit()
         {
-            replicationComponents = Owner.GetComponentsByType<ReplicationComponent>().ToArray();
+          
         }
 
         internal List<byte[]> GetFullComponentsData()
@@ -38,14 +39,7 @@ namespace Components
         {
             foreach(byte[] componentData in components)
             {
-                int componentID = 0;
-                //fixed(byte* ptr = componentData)
-                //{
-                //    int* dist = &componentID;
-                //    Buffer.MemoryCopy(ptr, &componentID, 4, 4);
-                //}
-               
-
+                int componentID = BitConverter.ToInt32(componentData, 0);
                 Array.Find(replicationComponents, c => c.ComponentID == componentID).UpdateData(componentData);
             }
         }
