@@ -14,9 +14,13 @@ namespace Components
         {
             startSyncMillis = currentMillis;
             startLocalTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            this.serverTickMilliseconds = serverTickMilliseconds;
             currentTick = (uint)(currentMillis / serverTickMilliseconds);
             DeltaTime = serverTickMilliseconds / 1000f;
         }
+
+
+        public long ServerTickMilliseconds => serverTickMilliseconds;
 
         /// <summary>Current tick</summary>
         public long TickCount => currentTick;
